@@ -1,36 +1,49 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 const Color_Generator = () => {
+  const [generatedColor, setGeneratedColor] = useState("rgb(0,0,0)");
+  const [colorsArray, setColorsArray] = useState<string[]>([]);
+  const [display, setDisplay] = useState<boolean>(false);
 
-    const [red,setRed] = useState<number>(0);
-    const [green,setGreen] = useState<number>(0);
-    const [blue,setBlue] = useState<number>(0);
-    const [display, setDisplay] = useState<boolean>(false);
+  const handleEvent = () => {
+    //Varibales to store rgb values
+    const red = Math.round(Math.random() * 255);
+    const green = Math.round(Math.random() * 255);
+    const blue = Math.round(Math.random() * 255);
 
-    const handleEvent = () =>{
-        setRed(Math.round(Math.random()*255));
-        setGreen(Math.round(Math.random()*255));
-        setBlue(Math.round(Math.random()*255));
-        setDisplay(true);
-    }
+    setGeneratedColor(`rgb(${red},${green},${blue})`);
+    setDisplay(true);
 
-    const colorObject = {
-        width : '100%',
-        height : '100vh',
-        backgroundColor : `rgb(${red},${green},${blue})`,
-        display:'flex',
-        flexDirection: 'column',
-        justifyContent:'center',
-        alignItems:'center',
-        gap:'1rem'
-    } as const
+    setColorsArray((oldColors) => {
+      return [...oldColors, generatedColor];
+    });
+  };
+
+  const changeBackgroundAgain = (selectedColor: string) => {
+    setGeneratedColor(selectedColor);
+  };
 
   return (
-    <div style={colorObject}>
-    <button style={{fontSize:'1.5rem', padding:'0.7rem', borderRadius:'0.4rem', border:'none', fontFamily:'cursive', cursor:'pointer'}} onClick={handleEvent}>pick color</button>
-    <p style={{textShadow:'1px 0px 1px white', fontSize:'1.4rem', fontFamily:'sans-serif', display: display? 'block':'none', boxShadow:'white 3px 3px 11px 7px', padding:'0.9rem 0.5rem', borderRadius:'0.4rem' }}>You picked RGB : (<span style={{color:'red'}}>{red}</span>,<span style={{color:'green'}}>{green}</span>,<span style={{color:'blue'}}>{blue}</span>)</p>
+    <div className="colorContainer" style={{ backgroundColor: generatedColor }}>
+      <button onClick={handleEvent}>pick color</button>
+      <p style={{ display: display ? "block" : "none" }}>
+        You picked RGB : {generatedColor}
+      </p>
+      <ul style={{ display: display ? "flex" : "none" }}>
+        {colorsArray.length &&
+          colorsArray.map((currentColor, index) => {
+            return (
+              <li
+                onClick={() => changeBackgroundAgain(currentColor)}
+                style={{ backgroundColor: colorsArray[index] }}
+                key={currentColor}>
+                {currentColor}
+              </li>
+            );
+          })}
+      </ul>
     </div>
-  )
-}
+  );
+};
 
 export default Color_Generator;
